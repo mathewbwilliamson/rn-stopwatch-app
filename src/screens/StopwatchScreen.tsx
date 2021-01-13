@@ -21,27 +21,33 @@ export const StopwatchScreen: NavigationStackScreenComponent = () => {
         );
     };
 
-    console.log('\x1b[41m%s \x1b[0m', '[matt] stopwatchCount', stopwatchCount);
+    const onAddStopwatch = () => {
+        if (stopwatchCount.length === 0) {
+            setStopwatchCount([{ id: 0 }]);
+        } else {
+            setStopwatchCount([
+                ...stopwatchCount,
+                {
+                    id: stopwatchCount[stopwatchCount.length - 1].id + 1,
+                },
+            ]);
+        }
+    };
+
     return (
         <SafeAreaView>
-            {Object.keys(stopwatchCount).map((item, idx) => {
-                const thing = stopwatchCount[idx];
+            <Button title="Add Stopwatch" onPress={() => onAddStopwatch()} />
+            {Object.keys(stopwatchCount).map((_key, idx) => {
+                const actualItem = stopwatchCount[idx];
 
-                return <Stopwatch key={thing.id} />;
+                return (
+                    <Stopwatch
+                        key={actualItem.id}
+                        id={actualItem.id}
+                        onRemoveStopwatch={removeStopwatch}
+                    />
+                );
             })}
-            <Button
-                title="Add Stopwatch"
-                onPress={() =>
-                    setStopwatchCount([
-                        ...stopwatchCount,
-                        {
-                            id:
-                                stopwatchCount[stopwatchCount.length - 1].id +
-                                1,
-                        },
-                    ])
-                }
-            />
         </SafeAreaView>
     );
 };

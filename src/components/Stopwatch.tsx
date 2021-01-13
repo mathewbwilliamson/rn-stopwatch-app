@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
 
 export const formatTime = (rawTime: number) => {
     const getSeconds = `0${rawTime % 60}`.slice(-2);
@@ -12,7 +13,15 @@ export const formatTime = (rawTime: number) => {
     return `${getHours}:${getMinutes}:${getSeconds}`;
 };
 
-export const Stopwatch = () => {
+interface StopwatchProps {
+    onRemoveStopwatch: (stopwatchId: number) => void;
+    id: number;
+}
+
+export const Stopwatch: React.FC<StopwatchProps> = ({
+    onRemoveStopwatch,
+    id,
+}) => {
     const [timer, setTimer] = React.useState<number>(0);
     const [isActive, setIsActive] = React.useState<boolean>(false);
     const [isPaused, setIsPaused] = React.useState<boolean>(true);
@@ -41,6 +50,16 @@ export const Stopwatch = () => {
 
     return (
         <View style={styles.stopwatchContainer}>
+            <AntDesign
+                name="closecircle"
+                size={24}
+                color="black"
+                style={styles.icon}
+                onPress={() => {
+                    handleClear();
+                    onRemoveStopwatch(id);
+                }}
+            />
             <Text style={styles.timerContainer}>{formatTime(timer)}</Text>
             <View style={styles.buttonContainer}>
                 <View style={styles.button}>
@@ -87,5 +106,10 @@ const styles = StyleSheet.create({
     button: {
         flex: 1,
         paddingHorizontal: 10,
+    },
+    icon: {
+        position: 'absolute',
+        top: 6,
+        right: 10,
     },
 });
