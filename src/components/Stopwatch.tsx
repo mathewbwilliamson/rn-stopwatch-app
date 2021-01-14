@@ -21,10 +21,14 @@ export const Stopwatch: React.FC<StopwatchProps> = ({
 
     const [startTime, setStartTime] = React.useState<Date>(new Date());
     const [currentTime, setCurrentTime] = React.useState<Date>();
+    const [pauseOffset, setPauseOffset] = React.useState<number>(0);
 
     const onStartTimer = () => {
         if (!isActive) {
             setStartTime(new Date());
+        } else {
+            const offset = differenceInSeconds(new Date(), currentTime!);
+            setPauseOffset((offs) => offs + offset);
         }
         setIsActive(true);
         setIsPaused(false);
@@ -53,6 +57,7 @@ export const Stopwatch: React.FC<StopwatchProps> = ({
             thing
         );
     }
+    console.log('\x1b[42m%s \x1b[0m', '[matt] pauseOffset', pauseOffset);
     return (
         <View style={styles.stopwatchContainer}>
             <AntDesign
@@ -67,7 +72,10 @@ export const Stopwatch: React.FC<StopwatchProps> = ({
             />
             <Text style={styles.timerContainer}>
                 {!!currentTime
-                    ? formatTime(differenceInSeconds(currentTime, startTime))
+                    ? formatTime(
+                          differenceInSeconds(currentTime, startTime) -
+                              pauseOffset
+                      )
                     : '00:00:00'}
             </Text>
             <View style={styles.buttonContainer}>
