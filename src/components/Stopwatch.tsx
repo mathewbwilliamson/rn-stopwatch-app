@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { formatTime } from './utils/stopwatchUtils';
+import { differenceInSeconds, format } from 'date-fns';
 
 interface StopwatchProps {
     onRemoveStopwatch: (stopwatchId: number) => void;
@@ -12,17 +13,24 @@ export const Stopwatch: React.FC<StopwatchProps> = ({
     onRemoveStopwatch,
     id,
 }) => {
-    const [timer, setTimer] = React.useState<number>(0);
+    // const [timer, setTimer] = React.useState<number>(0);
     const [isActive, setIsActive] = React.useState<boolean>(false);
     const [isPaused, setIsPaused] = React.useState<boolean>(true);
+    const [stopwatchLabel, setStopwatchLabel] = React.useState<string>('');
     const countRef = React.useRef<any>(undefined);
 
+    const [startTime, setStartTime] = React.useState<Date>(new Date());
+    const [currentTime, setCurrentTime] = React.useState<Date>();
+
     const onStartTimer = () => {
+        if (!isActive) {
+            setStartTime(new Date());
+        }
         setIsActive(true);
         setIsPaused(false);
 
         countRef.current = setInterval(() => {
-            setTimer((timerTime) => timerTime + 1);
+            setCurrentTime(new Date());
         }, 1000);
     };
 
@@ -35,9 +43,16 @@ export const Stopwatch: React.FC<StopwatchProps> = ({
         clearInterval(countRef.current);
         setIsPaused(true);
         setIsActive(false);
-        setTimer(0);
     };
 
+    if (!!currentTime) {
+        const thing = differenceInSeconds(currentTime, startTime);
+        console.log(
+            '\x1b[41m%s \x1b[0m',
+            '[matt] Differnece in Seconds',
+            thing
+        );
+    }
     return (
         <View style={styles.stopwatchContainer}>
             <AntDesign
@@ -50,7 +65,11 @@ export const Stopwatch: React.FC<StopwatchProps> = ({
                     onRemoveStopwatch(id);
                 }}
             />
-            <Text style={styles.timerContainer}>{formatTime(timer)}</Text>
+            <Text style={styles.timerContainer}>
+                {!!currentTime
+                    ? formatTime(differenceInSeconds(currentTime, startTime))
+                    : '00:00:00'}
+            </Text>
             <View style={styles.buttonContainer}>
                 <View style={styles.button}>
                     <Button
