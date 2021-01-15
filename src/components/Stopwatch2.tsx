@@ -25,10 +25,11 @@ export const Stopwatch2: React.FC<Stopwatch2Props> = ({
 
     const onStartTimer = () => {
         console.log(
-            '\x1b[41m%s \x1b[0m',
+            '\x1b[45m%s \x1b[0m',
             '[matt] formatTime(differenceInSeconds(timerTime, timerStart))',
             formatTime(differenceInSeconds(timerTime, timerStart)),
-            timerStart
+            timerStart,
+            timerTime
         );
         if (timerStart === 0) {
             setTimerStart(Date.now() - timerTime);
@@ -37,8 +38,8 @@ export const Stopwatch2: React.FC<Stopwatch2Props> = ({
 
         timerRef.current = setInterval(() => {
             console.log('\x1b[42m%s \x1b[0m', '[matt] timerTime', timerTime);
-            setTimerTime(Date.now() - timerTime);
-        }, 1000);
+            setTimerTime(differenceInSeconds(Date.now(), timerTime));
+        }, 1);
     };
 
     const handlePause = () => {
@@ -55,7 +56,8 @@ export const Stopwatch2: React.FC<Stopwatch2Props> = ({
         '\x1b[42m%s \x1b[0m',
         '[matt] formatTime(differenceInSeconds(timerTime, timerStart))',
         formatTime(differenceInSeconds(timerTime, timerStart)),
-        timerStart
+        timerStart,
+        timerTime
     );
 
     return (
