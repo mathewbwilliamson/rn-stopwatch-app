@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
-import { Stopwatch } from '../components/Stopwatch';
+import { Stopwatch2 } from '../components/Stopwatch2';
 
 interface Stopwatch {
     id: number;
@@ -41,7 +41,7 @@ export const StopwatchScreen: NavigationStackScreenComponent = () => {
                 const actualItem = stopwatchCount[idx];
 
                 return (
-                    <Stopwatch
+                    <Stopwatch2
                         key={actualItem.id}
                         id={actualItem.id}
                         onRemoveStopwatch={removeStopwatch}

@@ -4,60 +4,54 @@ import { AntDesign } from '@expo/vector-icons';
 import { formatTime } from './utils/stopwatchUtils';
 import { differenceInSeconds, format } from 'date-fns';
 
-interface StopwatchProps {
+interface Stopwatch2Props {
     onRemoveStopwatch: (stopwatchId: number) => void;
     id: number;
 }
 
-export const Stopwatch: React.FC<StopwatchProps> = ({
+export const Stopwatch2: React.FC<Stopwatch2Props> = ({
     onRemoveStopwatch,
     id,
 }) => {
-    const [isActive, setIsActive] = React.useState<boolean>(false);
-    const [isPaused, setIsPaused] = React.useState<boolean>(true);
-    const [stopwatchLabel, setStopwatchLabel] = React.useState<string>('');
-    const countRef = React.useRef<any>(undefined);
+    const [timerOn, setTimerOn] = React.useState<boolean>(false);
+    const [timerTime, setTimerTime] = React.useState<number>(0);
+    const [timerStart, setTimerStart] = React.useState<number>(0);
 
-    const [startTime, setStartTime] = React.useState<Date>(new Date());
-    const [currentTime, setCurrentTime] = React.useState<Date>();
-    const [pauseOffset, setPauseOffset] = React.useState<number>(0);
+    const timerRef = React.useRef<any>(undefined);
+
+    React.useEffect(() => {
+        return () => clearInterval(timerRef.current);
+    }, []);
 
     const onStartTimer = () => {
-        if (!isActive) {
-            setStartTime(new Date());
-        } else {
-            const offset = differenceInSeconds(new Date(), currentTime!);
-            setPauseOffset((offs) => offs + offset);
-        }
+        setTimerOn(true);
+        setTimerTime(timerTime); // [matt] WTF
+        setTimerStart(Date.now() - timerTime);
 
-        countRef.current = setInterval(() => {
-            setCurrentTime(new Date());
+        timerRef.current = setInterval(() => {
+            setTimerTime(Date.now() - timerTime);
         }, 1000);
-
-        setIsActive(true);
-        setIsPaused(false);
     };
 
     const handlePause = () => {
-        clearInterval(countRef.current);
-        setIsPaused(true);
+        setTimerOn(false);
+        clearInterval(timerRef.current);
     };
 
     const handleClear = () => {
-        clearInterval(countRef.current);
-        setIsPaused(true);
-        setIsActive(false);
+        setTimerStart(0);
+        setTimerTime(0);
     };
 
-    if (!!currentTime) {
-        const thing = differenceInSeconds(currentTime, startTime);
-        console.log(
-            '\x1b[41m%s \x1b[0m',
-            '[matt] Differnece in Seconds',
-            thing
-        );
-    }
-    console.log('\x1b[42m%s \x1b[0m', '[matt] pauseOffset', pauseOffset);
+    // if (!!currentTime) {
+    //     const thing = differenceInSeconds(currentTime, startTime);
+    //     console.log(
+    //         '\x1b[41m%s \x1b[0m',
+    //         '[matt] Differnece in Seconds',
+    //         thing
+    //     );
+    // }
+    // console.log('\x1b[42m%s \x1b[0m', '[matt] pauseOffset', pauseOffset);
     return (
         <View style={styles.stopwatchContainer}>
             <AntDesign
@@ -71,11 +65,8 @@ export const Stopwatch: React.FC<StopwatchProps> = ({
                 }}
             />
             <Text style={styles.timerContainer}>
-                {!!currentTime
-                    ? formatTime(
-                          differenceInSeconds(currentTime, startTime) -
-                              pauseOffset
-                      )
+                {!!timerTime
+                    ? formatTime(differenceInSeconds(timerTime, timerStart))
                     : '00:00:00'}
             </Text>
             <View style={styles.buttonContainer}>
@@ -83,14 +74,14 @@ export const Stopwatch: React.FC<StopwatchProps> = ({
                     <Button
                         onPress={() => onStartTimer()}
                         title="Start"
-                        disabled={!isPaused}
+                        disabled={!!timerOn}
                     />
                 </View>
                 <View style={styles.button}>
                     <Button
                         onPress={() => handlePause()}
                         title="Pause"
-                        disabled={!!isPaused}
+                        disabled={!timerOn}
                     />
                 </View>
                 <View style={styles.button}>
