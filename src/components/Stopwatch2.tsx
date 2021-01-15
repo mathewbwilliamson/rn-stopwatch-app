@@ -24,11 +24,19 @@ export const Stopwatch2: React.FC<Stopwatch2Props> = ({
     }, []);
 
     const onStartTimer = () => {
+        console.log(
+            '\x1b[41m%s \x1b[0m',
+            '[matt] formatTime(differenceInSeconds(timerTime, timerStart))',
+            formatTime(differenceInSeconds(timerTime, timerStart)),
+            timerStart
+        );
+        if (timerStart === 0) {
+            setTimerStart(Date.now() - timerTime);
+        }
         setTimerOn(true);
-        setTimerTime(timerTime); // [matt] WTF
-        setTimerStart(Date.now() - timerTime);
 
         timerRef.current = setInterval(() => {
+            console.log('\x1b[42m%s \x1b[0m', '[matt] timerTime', timerTime);
             setTimerTime(Date.now() - timerTime);
         }, 1000);
     };
@@ -43,15 +51,13 @@ export const Stopwatch2: React.FC<Stopwatch2Props> = ({
         setTimerTime(0);
     };
 
-    // if (!!currentTime) {
-    //     const thing = differenceInSeconds(currentTime, startTime);
-    //     console.log(
-    //         '\x1b[41m%s \x1b[0m',
-    //         '[matt] Differnece in Seconds',
-    //         thing
-    //     );
-    // }
-    // console.log('\x1b[42m%s \x1b[0m', '[matt] pauseOffset', pauseOffset);
+    console.log(
+        '\x1b[42m%s \x1b[0m',
+        '[matt] formatTime(differenceInSeconds(timerTime, timerStart))',
+        formatTime(differenceInSeconds(timerTime, timerStart)),
+        timerStart
+    );
+
     return (
         <View style={styles.stopwatchContainer}>
             <AntDesign
