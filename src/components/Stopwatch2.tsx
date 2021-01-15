@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Button } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { formatTime } from './utils/stopwatchUtils';
 import { differenceInSeconds, format } from 'date-fns';
+import { useStopwatch } from './customHooks/useStopwatch';
 
 interface Stopwatch2Props {
     onRemoveStopwatch: (stopwatchId: number) => void;
@@ -13,52 +14,23 @@ export const Stopwatch2: React.FC<Stopwatch2Props> = ({
     onRemoveStopwatch,
     id,
 }) => {
-    const [timerOn, setTimerOn] = React.useState<boolean>(false);
-    const [timerTime, setTimerTime] = React.useState<number>(0);
-    const [timerStart, setTimerStart] = React.useState<number>(0);
+    const {
+        laps,
+        addLap,
+        isRunning,
+        elapsedTime,
+        startTimer,
+        stopTimer,
+        resetTimer,
+    } = useStopwatch();
 
-    const timerRef = React.useRef<any>(undefined);
-
-    React.useEffect(() => {
-        return () => clearInterval(timerRef.current);
-    }, []);
-
-    const onStartTimer = () => {
-        console.log(
-            '\x1b[45m%s \x1b[0m',
-            '[matt] formatTime(differenceInSeconds(timerTime, timerStart))',
-            formatTime(differenceInSeconds(timerTime, timerStart)),
-            timerStart,
-            timerTime
-        );
-        if (timerStart === 0) {
-            setTimerStart(Date.now() - timerTime);
-        }
-        setTimerOn(true);
-
-        timerRef.current = setInterval(() => {
-            console.log('\x1b[42m%s \x1b[0m', '[matt] timerTime', timerTime);
-            setTimerTime(differenceInSeconds(Date.now(), timerTime));
-        }, 1);
+    const handleStartStop = () => {
+        isRunning ? stopTimer() : startTimer();
     };
 
-    const handlePause = () => {
-        setTimerOn(false);
-        clearInterval(timerRef.current);
+    const handleReset = () => {
+        resetTimer();
     };
-
-    const handleClear = () => {
-        setTimerStart(0);
-        setTimerTime(0);
-    };
-
-    console.log(
-        '\x1b[42m%s \x1b[0m',
-        '[matt] formatTime(differenceInSeconds(timerTime, timerStart))',
-        formatTime(differenceInSeconds(timerTime, timerStart)),
-        timerStart,
-        timerTime
-    );
 
     return (
         <View style={styles.stopwatchContainer}>
@@ -68,7 +40,7 @@ export const Stopwatch2: React.FC<Stopwatch2Props> = ({
                 color="black"
                 style={styles.icon}
                 onPress={() => {
-                    handleClear();
+                    handleReset();
                     onRemoveStopwatch(id);
                 }}
             />
@@ -93,7 +65,7 @@ export const Stopwatch2: React.FC<Stopwatch2Props> = ({
                     />
                 </View>
                 <View style={styles.button}>
-                    <Button onPress={() => handleClear()} title="Clear" />
+                    <Button onPress={() => handleReset()} title="Clear" />
                 </View>
             </View>
         </View>
