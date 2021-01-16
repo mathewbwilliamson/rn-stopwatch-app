@@ -21,7 +21,7 @@ export const Stopwatch2: React.FC<Stopwatch2Props> = ({
     const updateTime = () => {
         const delta = Date.now() - startTime;
         setElapsedTime((prevElapsedTime) => prevElapsedTime + delta);
-        setStartTime(Date.now());
+        // setStartTime(Date.now());
     };
 
     const handleStartTimer = () => {
