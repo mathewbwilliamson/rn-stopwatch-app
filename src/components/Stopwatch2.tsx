@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
+/* eslint-disable react/prop-types */
 import { AntDesign } from '@expo/vector-icons';
-import { formatTime } from './utils/stopwatchUtils';
-import { differenceInSeconds, format } from 'date-fns';
+import { format } from 'date-fns';
+import React from 'react';
+import { Button, StyleSheet, Text, View } from 'react-native';
 import { useStopwatch } from './customHooks/useStopwatch';
 
 interface Stopwatch2Props {
@@ -14,22 +14,21 @@ export const Stopwatch2: React.FC<Stopwatch2Props> = ({
     onRemoveStopwatch,
     id,
 }) => {
-    const {
-        laps,
-        addLap,
-        isRunning,
-        elapsedTime,
-        startTimer,
-        stopTimer,
-        resetTimer,
-    } = useStopwatch();
+    const [startTime, setStartTime] = React.useState<number>(0);
+    const [elapsedTime, setElapsedTime] = React.useState<number>(0);
+    const interval = React.useRef<any>(undefined);
 
-    const handleStartStop = () => {
-        isRunning ? stopTimer() : startTimer();
+    const updateTime = () => {
+        const delta = Date.now() - startTime;
+        setElapsedTime((prevElapsedTime) => prevElapsedTime + delta);
+        setStartTime(Date.now());
     };
 
-    const handleReset = () => {
-        resetTimer();
+    const handleStartTimer = () => {
+        setStartTime(Date.now());
+        interval.current = setInterval(() => updateTime(), 100);
+
+        // return () => clearInterval(interval.current);
     };
 
     return (
@@ -40,32 +39,30 @@ export const Stopwatch2: React.FC<Stopwatch2Props> = ({
                 color="black"
                 style={styles.icon}
                 onPress={() => {
-                    handleReset();
+                    // resetTimer();
                     onRemoveStopwatch(id);
                 }}
             />
             <Text style={styles.timerContainer}>
-                {!!timerTime
-                    ? formatTime(differenceInSeconds(timerTime, timerStart))
-                    : '00:00:00'}
+                {format(elapsedTime, 'HH:mm:ss')}
             </Text>
             <View style={styles.buttonContainer}>
                 <View style={styles.button}>
                     <Button
-                        onPress={() => onStartTimer()}
+                        onPress={() => handleStartTimer()}
                         title="Start"
-                        disabled={!!timerOn}
+                        // disabled={!!isRunning}
                     />
                 </View>
                 <View style={styles.button}>
                     <Button
-                        onPress={() => handlePause()}
+                        onPress={() => handleStartTimer()}
                         title="Pause"
-                        disabled={!timerOn}
+                        // disabled={!isRunning}
                     />
                 </View>
                 <View style={styles.button}>
-                    <Button onPress={() => handleReset()} title="Clear" />
+                    {/* <Button onPress={() => resetTimer()} title="Clear" /> */}
                 </View>
             </View>
         </View>

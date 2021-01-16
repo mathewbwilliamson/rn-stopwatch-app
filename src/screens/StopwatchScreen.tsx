@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { Button, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import { Stopwatch2 } from '../components/Stopwatch2';
@@ -14,7 +14,6 @@ export const StopwatchScreen: NavigationStackScreenComponent = () => {
             id: 0,
         },
     ]);
-
     const removeStopwatch = (stopwatchId: number) => {
         setStopwatchCount(
             stopwatchCount.filter((item) => item.id !== stopwatchId)

@@ -3,10 +3,10 @@ import React from "react";
 export const useTimer = () => {
   const [isRunning, setIsRunning] = React.useState(false);
   const [elapsedTime, setElapsedTime] = React.useState(0);
+  const interval = React.useRef<any>(undefined);
 
   React.useEffect(
     () => {
-      let interval = React.useRef<any>(undefined);;
       if (isRunning) {
         interval.current = setInterval(
           () => setElapsedTime(prevElapsedTime => prevElapsedTime + 0.1),
