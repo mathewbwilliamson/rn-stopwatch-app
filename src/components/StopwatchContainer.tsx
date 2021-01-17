@@ -3,6 +3,8 @@ import React from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import { Stopwatch } from 'react-native-stopwatch-timer';
 import { AntDesign } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableLabel } from './TouchableLabel';
 
 interface StopwatchContainerProps {
     onRemoveStopwatch: (stopwatchId: number) => void;
@@ -33,7 +35,8 @@ export const StopwatchContainer: React.FC<StopwatchContainerProps> = ({
     };
 
     return (
-        <View>
+        <View style={styles.stopwatchContainer}>
+            <TouchableLabel />
             <AntDesign
                 name="closecircle"
                 size={24}
@@ -49,11 +52,12 @@ export const StopwatchContainer: React.FC<StopwatchContainerProps> = ({
                 msecs={true}
                 start={stopwatchStart}
                 reset={stopwatchReset}
-                // options={options}
                 getTime={getFormattedTime}
             />
-            <Button title="Start/Stop" onPress={ToggleStopwatch} />
-            <Button title="Reset" onPress={ResetStopwatch} />
+            <View style={styles.buttonContainer}>
+                <Button title="Start/Stop" onPress={ToggleStopwatch} />
+                <Button title="Reset" onPress={ResetStopwatch} />
+            </View>
         </View>
     );
 };
@@ -66,6 +70,9 @@ const styles = StyleSheet.create({
         borderBottomWidth: 3,
         paddingTop: 18,
         paddingBottom: 24,
+        display: 'flex',
+        alignItems: 'center',
+        width: '100%',
     },
     timerContainer: {
         textAlign: 'center',
@@ -74,6 +81,8 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         display: 'flex',
+        width: '100%',
+        marginTop: 20,
         flexDirection: 'row',
         justifyContent: 'space-around',
     },
