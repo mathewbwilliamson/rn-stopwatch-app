@@ -1,19 +1,21 @@
 /* eslint-disable react/prop-types */
-import React from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
-import { Stopwatch } from 'react-native-stopwatch-timer';
 import { AntDesign } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import React from 'react';
+import { Button, StyleSheet, View } from 'react-native';
+import { Stopwatch as StopwatchType } from '../types/stopwatchTypes';
 import { TouchableLabel } from './TouchableLabel';
+import { Stopwatch } from 'react-native-stopwatch-timer';
 
 interface StopwatchContainerProps {
     onRemoveStopwatch: (stopwatchId: number) => void;
-    id: number;
+    onEditStopwatchLabel: (editedStopwatch: StopwatchType) => void;
+    stopwatch: StopwatchType;
 }
 
 export const StopwatchContainer: React.FC<StopwatchContainerProps> = ({
-    id,
+    stopwatch,
     onRemoveStopwatch,
+    onEditStopwatchLabel,
 }) => {
     const [stopwatchStart, useStopwatchStart] = React.useState<boolean>(false);
     const [stopwatchReset, useStopwatchReset] = React.useState<boolean>(false);
@@ -36,7 +38,10 @@ export const StopwatchContainer: React.FC<StopwatchContainerProps> = ({
 
     return (
         <View style={styles.stopwatchContainer}>
-            <TouchableLabel />
+            <TouchableLabel
+                stopwatch={stopwatch}
+                onEditStopwatchLabel={onEditStopwatchLabel}
+            />
             <AntDesign
                 name="closecircle"
                 size={24}
@@ -44,7 +49,7 @@ export const StopwatchContainer: React.FC<StopwatchContainerProps> = ({
                 style={styles.icon}
                 onPress={() => {
                     ResetStopwatch();
-                    onRemoveStopwatch(id);
+                    onRemoveStopwatch(stopwatch.id);
                 }}
             />
             <Stopwatch

@@ -1,41 +1,56 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/rules-of-hooks */
 import React from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
+import { Stopwatch } from '../types/stopwatchTypes';
 
-interface TouchableLabelProps {}
+interface TouchableLabelProps {
+    stopwatch: Stopwatch;
+    onEditStopwatchLabel: (editedStopwatch: Stopwatch) => void;
+}
 
-export const TouchableLabel: React.FC<TouchableLabelProps> = () => {
-    const [label, useLabel] = React.useState<string>('Label');
-    const [isTextInputActive, useIsTextInputActive] = React.useState<boolean>(
+export const TouchableLabel: React.FC<TouchableLabelProps> = ({
+    stopwatch,
+    onEditStopwatchLabel,
+}) => {
+    const [label, setLabel] = React.useState<string>(stopwatch.label);
+    const [isTextInputActive, setIsTextInputActive] = React.useState<boolean>(
         false
     );
+
+    const onChangeLabel = (newLabel: string) => {
+        setLabel(newLabel);
+        onEditStopwatchLabel({ id: stopwatch.id, label: newLabel });
+    };
 
     return (
         <View style={styles.container}>
             {!isTextInputActive ? (
                 <TouchableOpacity
-                    onPress={() => useIsTextInputActive(!isTextInputActive)}
+                    onPress={() => setIsTextInputActive(!isTextInputActive)}
                 >
-                    <Text style={styles.labelText}>{label}</Text>
+                    <Text style={styles.labelText}>{stopwatch.label}</Text>
                 </TouchableOpacity>
             ) : (
                 <TouchableOpacity
-                    onPress={() => useIsTextInputActive(!isTextInputActive)}
+                    onPress={() => setIsTextInputActive(!isTextInputActive)}
                     style={styles.behindText}
                 >
                     <Text style={styles.modalText}>Input New Label:</Text>
                     <TextInput
                         style={styles.textInput}
                         value={label}
-                        onChangeText={(changedText) => useLabel(changedText)}
-                        onBlur={() => useIsTextInputActive(!isTextInputActive)}
+                        onChangeText={(changedText) =>
+                            onChangeLabel(changedText)
+                        }
+                        onBlur={() => setIsTextInputActive(!isTextInputActive)}
                         selectTextOnFocus={true}
                         autoFocus={true}
                     />
                     <Button
                         title="Save"
-                        onPress={() => useIsTextInputActive(!isTextInputActive)}
+                        onPress={() => setIsTextInputActive(!isTextInputActive)}
                     />
                 </TouchableOpacity>
             )}

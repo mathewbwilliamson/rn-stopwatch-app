@@ -3,47 +3,53 @@ import { Button, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationStackScreenComponent } from 'react-navigation-stack';
 import { StopwatchContainer } from '../components/StopwatchContainer';
-
-interface Stopwatch {
-    id: number;
-}
+import { Stopwatch } from '../types/stopwatchTypes';
 
 export const StopwatchScreen: NavigationStackScreenComponent = () => {
-    const [stopwatchCount, setStopwatchCount] = React.useState<Stopwatch[]>([
+    const [stopwatches, setStopwatches] = React.useState<Stopwatch[]>([
         {
             id: 0,
+            label: 'Label',
         },
     ]);
+
     const removeStopwatch = (stopwatchId: number) => {
-        setStopwatchCount(
-            stopwatchCount.filter((item) => item.id !== stopwatchId)
-        );
+        setStopwatches(stopwatches.filter((item) => item.id !== stopwatchId));
     };
 
     const onAddStopwatch = () => {
-        if (stopwatchCount.length === 0) {
-            setStopwatchCount([{ id: 0 }]);
+        if (stopwatches.length === 0) {
+            setStopwatches([{ id: 0, label: 'label' }]);
         } else {
-            setStopwatchCount([
-                ...stopwatchCount,
+            setStopwatches([
+                ...stopwatches,
                 {
-                    id: stopwatchCount[stopwatchCount.length - 1].id + 1,
+                    ...stopwatches[stopwatches.length - 1],
+                    id: stopwatches[stopwatches.length - 1].id + 1,
                 },
             ]);
         }
     };
 
+    const onEditStopwatchLabel = (editedStopwatch: Stopwatch) => {
+        const noEditedStopwatches = stopwatches.filter(
+            (stopwatch) => stopwatch.id !== editedStopwatch.id
+        );
+        setStopwatches([...noEditedStopwatches, editedStopwatch]);
+    };
+
     return (
         <SafeAreaView>
             <Button title="Add Stopwatch" onPress={() => onAddStopwatch()} />
-            {Object.keys(stopwatchCount).map((_key, idx) => {
-                const actualItem = stopwatchCount[idx];
+            {Object.keys(stopwatches).map((_key, idx) => {
+                const actualItem = stopwatches[idx];
 
                 return (
                     <StopwatchContainer
                         key={actualItem.id}
-                        id={actualItem.id}
+                        stopwatch={actualItem}
                         onRemoveStopwatch={removeStopwatch}
+                        onEditStopwatchLabel={onEditStopwatchLabel}
                     />
                 );
             })}
